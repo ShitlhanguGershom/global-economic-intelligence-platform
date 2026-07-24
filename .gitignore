@@ -216,3 +216,45 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --------------------------------------------------
+# Project-specific ignores
+# --------------------------------------------------
+
+# Environment variables and secrets
+.env.*
+*.env
+credentials.json
+secrets.json
+config/secrets.yaml
+
+# VS Code settings
+.vscode/
+
+# PyCharm settings
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Power BI temporary and backup files
+*.pbix.autosave
+*.tmp
+
+# Raw datasets
+data/raw/*
+!data/raw/.gitkeep
+
+# Processed datasets
+data/processed/*
+!data/processed/.gitkeep
+
+# External/reference datasets
+data/external/*
+!data/external/.gitkeep
