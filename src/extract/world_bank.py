@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+from src.config import COUNTRIES,END_YEAR,START_YEAR,INDICATORS
 import json
 import logging
 from datetime import UTC, datetime
@@ -123,28 +123,53 @@ def save_raw_response(
     return output_path
 
 def main() -> None:
-    country_code = "ZAF"
-    indicator_code = "NY.GDP.MKTP.CD"
 
-    try:
-        payload = fetch_indicator_data(
-            country_code=country_code,
-            indicator_code=indicator_code,
-            start_year=2000,
-            end_year=2025,
-        )
+    successfull_extractions=0
+    failed_extractions=0
 
-        output_path = save_raw_response(
-            payload=payload,
-            country_code=country_code,
-            indicator_code=indicator_code,
-        )
+    for country_code,country_name in COUNTRIES.items():
+        for indicator_code,indicator_name in INDICATORS.items():
 
-        print(f"Extraction completed successfully: {output_path}")
+            logger.info(
+                "Starting extraction: %s | %s",
+                country_name,
+                indicator_name,
+            )
 
-    except (ValueError, RuntimeError, requests.RequestException) as error:
-        logger.error("Extraction failed: %s", error)
-        raise SystemExit(1) from error
+            try:
+                payload = fetch_indicator_data(
+                    country_code=country_code,
+                    indicator_code=indicator_code,
+                    start_year=START_YEAR,
+                    end_year=END_YEAR,
+                )
+
+                output_path = save_raw_response(
+                    payload=payload,
+                    country_code=country_code,
+                    indicator_code=indicator_code,
+                )
+
+                logger.info(
+                    "Extraction completed successfully: %s",output_path
+                )
+
+                successfull_extractions+=1
+
+            except (ValueError, RuntimeError, requests.RequestException) as error:
+                
+                failed_extractions+=1
+                logger.error(
+                    "Extraction failed for %s | %s: %s",
+                      country_name,
+                      indicator_name,
+                      error,
+                      )
+    logger.info(
+        "Extraction run complete. Successful: %s | Failed: %s",
+        successfull_extractions,
+        failed_extractions,
+    )
 
 if __name__ == "__main__":
     main()
